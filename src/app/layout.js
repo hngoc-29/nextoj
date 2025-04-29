@@ -56,6 +56,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192" />
         <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
         <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+        <meta name="google-site-verification" content="exKzkXXkfCbBRohkUy2ptqVdT9oa8jqNnGSp2cY2m-Y" />
       </head>
       <body
         className={`antialiased`}
