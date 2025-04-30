@@ -21,9 +21,9 @@ export default function AuthButton({ }) {
             if (!data.success) {
                 return;
             }
+            setLoadingLoad(false);
             fetch(`${BACKEND}/start`);
             setUser(data.user);
-            setLoadingLoad(false);
             setIsOpen(false);
         };
 
