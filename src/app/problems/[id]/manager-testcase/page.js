@@ -14,7 +14,7 @@ export default async function TestcasePage({ params }) {
     const testcases = problem?.testcase || [];
 
     return (
-        <CheckUserServer>
+        <CheckUserServer requireAdmin={true}>
             <div className="max-w-4xl mx-auto p-6">
                 <h1 className="text-3xl font-semibold mb-4 text-gray-800">
                     🧪 Testcases for <span className="text-blue-600">"{problem?.title}"</span>

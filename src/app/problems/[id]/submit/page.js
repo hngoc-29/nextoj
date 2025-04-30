@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
     const problem = await fetchProblem((await params).id);
     return (
-        <CheckUserServer requireAdmin={true}>
+        <CheckUserServer>
             <div className="px-7 mt-5 w-full">
                 <h1 className="text-3xl font-[500]">Nộp bài {problem?.title}</h1>
                 <div className="bg-gray-400 h-[1px] mt-2" />
