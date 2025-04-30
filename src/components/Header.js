@@ -5,7 +5,6 @@ import AuthButton from "./AuthButton";
 
 export default function Header(pathnameOb) {
 
-
     const pathname = pathnameOb.pathname;
 
     const navigate = [

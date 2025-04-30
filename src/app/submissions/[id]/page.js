@@ -100,7 +100,7 @@ export default async function SubmissionResultPage({ params }) {
                 <SubmissionRunClient
                     submissionId={submission._id}
                     initialTestCount={testCount}
-                    BACKEND={process.env.BACKEND_URL}
+                    BACKEND={process.env.NEXT_PUBLIC_BACKEND_URL}
                 />
             )}
 

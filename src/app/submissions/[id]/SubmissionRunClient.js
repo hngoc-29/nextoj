@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
 export default function SubmissionRunClient({ submissionId, initialTestCount, BACKEND }) {
@@ -41,6 +42,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
         fetch(`${BACKEND}/submissions/${submissionId}/run`, { method: 'POST' })
             .then(res => res.json())
             .then(data => {
+                if (data.success) toast.warn(data.message)
                 if (data.testStatuses) {
                     setTestResults(
                         data.testStatuses.map(status => ({ status, time: null, memory: null }))
@@ -51,6 +53,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                     setDone(true);
                 }
                 if (data.done) {
+                    setScore(data.score);
                     setDone(true);
                 }
             })

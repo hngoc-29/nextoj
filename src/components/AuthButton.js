@@ -6,22 +6,27 @@ import { toast } from "react-toastify";
 import { useIsOpen } from '@/context/modalLogin';
 import { loadingLoadContext } from "@/context/loadingLoad";
 
-export default function AuthButton() {
+export default function AuthButton({ }) {
     const [showMenu, setShowMenu] = useState(false);
     const { isOpen, setIsOpen } = useIsOpen();
     const { setLoadingLoad } = useContext(loadingLoadContext);
     const { user, setUser } = useUser(); // Lấy thông tin người dùng từ context
     useEffect(() => {
+        const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
+        console.log("BACKEND:", BACKEND);
+
         const fetchUser = async () => {
             const res = await fetch("/api/users");
             const data = await res.json();
-            setLoadingLoad(false);
             if (!data.success) {
                 return;
             }
-            setUser(data.user)
+            fetch(`${BACKEND}/start`);
+            setUser(data.user);
+            setLoadingLoad(false);
             setIsOpen(false);
-        }
+        };
+
         fetchUser();
     }, []);
 
@@ -51,7 +56,7 @@ export default function AuthButton() {
                 onMouseOver={() => setShowMenu(true)}
                 onMouseOut={() => setShowMenu(false)}
             >
-                {user._id && <Link href="/user" className="absolute w-full h-full left-0 top-0 z-50  hover:bg-[rgba(255,255,255,0.2)]" />}
+                {user._id && <div href="/user" className="absolute w-full h-full left-0 top-0 z-50  hover:bg-[rgba(255,255,255,0.2)]" />}
                 {user._id ? (
                     <div className="relative h-full flex items-center space-x-2 cursor-pointer w-full">
                         <div className="flex items-center space-x-2 ml-3">
