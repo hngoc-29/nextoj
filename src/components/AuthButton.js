@@ -1,3 +1,4 @@
+// D:\code\web\nextoj\frontend\src\components\AuthButton.js
 "use client";
 import React, { useState, useContext, useEffect } from "react";
 import Link from "next/link";
