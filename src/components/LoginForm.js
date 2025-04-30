@@ -43,10 +43,14 @@ export default function LoginModal() {
                 setIsOpen(false);
             }
         };
-        document.title = 'Đăng nhập | OJ Platform'
         if (isOpen) document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen, setIsOpen]);
+
+    useEffect(() => {
+        if (isOpen)
+            document.title = 'Đăng nhập | OJ Platform'
+    }, [isOpen]);
 
     return (
         <>

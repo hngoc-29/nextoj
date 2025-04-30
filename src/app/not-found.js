@@ -1,5 +1,7 @@
 import PathnameDisplay from '@/components/PathnameDisplay'
-
+export const metadata = {
+    title: 'lỗi 404 | OJ Platform',
+}
 export default function page() {
     return (
         <div className="px-7 mt-5">
