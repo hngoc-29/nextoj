@@ -10,11 +10,11 @@ const authConfig = [
     { pathPattern: '/api/problems', methods: ['POST'], admin: true },
     { pathPattern: '/api/problems/:id', methods: ['PUT', 'DELETE'], admin: true },
     { pathPattern: '/api/problems/:id/testcase', methods: ['POST', 'PUT', 'DELETE'], admin: true },
-    { pathPattern: '/api/submissions', methods: ['POST'], admin: true },
     { pathPattern: '/api/users', methods: ['POST'], admin: true },
 
     // === REGISTERED USERS ===
     { pathPattern: '/api/cookie', methods: ['DELETE'], admin: false },
+    { pathPattern: '/api/submissions', methods: ['POST'], admin: false },
     { pathPattern: '/api/submissions/:id/run', methods: ['POST'], admin: false },
     { pathPattern: '/api/users', methods: ['GET'], admin: false },
     { pathPattern: '/api/users/leave', methods: ['POST'], admin: false },
