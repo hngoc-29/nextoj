@@ -12,23 +12,25 @@ export default function AuthButton({ }) {
     const { setLoadingLoad } = useContext(loadingLoadContext);
     const { user, setUser } = useUser(); // Lấy thông tin người dùng từ context
     useEffect(() => {
-        const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
-        console.log("BACKEND:", BACKEND);
-
         const fetchUser = async () => {
             const res = await fetch("/api/users");
             const data = await res.json();
             if (!data.success) {
+                setLoadingLoad(false);
                 return;
             }
             setLoadingLoad(false);
-            fetch(`${BACKEND}/start`);
             setUser(data.user);
             setIsOpen(false);
         };
 
         fetchUser();
     }, []);
+
+    useEffect(() => {
+        const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
+        fetch(`${BACKEND}/start`);
+    }, [])
 
     const handleLogout = async () => {
         const res = fetch(`/api/cookie`, {
