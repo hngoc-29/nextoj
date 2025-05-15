@@ -1,8 +1,8 @@
 import Link from 'next/link';
 
 export const metadata = {
-    title: 'Bài tập | OJ Platform', // Tiêu đề cho trang kỳ thi
-    description: 'Tham gia kỳ thi lập trình tại OJ Platform và kiểm tra kỹ năng lập trình của bạn.', // Mô tả cho trang kỳ thi
+    title: 'Bài tập | OJ Platform',
+    description: 'Tham gia kỳ thi lập trình tại OJ Platform và kiểm tra kỹ năng lập trình của bạn.',
     openGraph: {
         title: 'Bài tập | OJ Platform',
         description: 'Cùng nhau luyện tập lập trình tại OJ Platform.',
@@ -26,63 +26,62 @@ export default async function ProblemListPage({ searchParams }) {
     }
 
     return (
-        <div className="px-7 mt-5 w-full">
-            <h1 className="text-3xl font-semibold">Danh sách bài</h1>
-            <div className="bg-gray-400 h-[1px] mt-2" />
-            <div className="mt-7 overflow-x-auto">
-                <table className="table-fixed w-full border border-collapse text-sm">
-                    {/* THead */}
-                    <thead>
-                        <tr className="bg-black text-white">
-                            <th className="w-1/6 px-4 py-3 border text-center font-semibold rounded-tl-md">#</th>
-                            <th className="w-4/6 px-4 py-3 border text-left font-semibold">Bài</th>
-                            <th className="w-1/6 px-4 py-3 border text-center font-semibold rounded-tr-md">Điểm</th>
-                        </tr>
-                    </thead>
-
-                    {/* TBody với zebra striping */}
-                    <tbody>
-                        {problems.map((problem, index) => (
-                            <tr
-                                key={problem._id || index}
-                                className="odd:bg-white even:bg-gray-50 hover:bg-gray-100"
-                            >
-                                <td className="px-4 py-[12px] border border-gray-300 text-center">
-                                    {limit * (page - 1) + index + 1}
-                                </td>
-                                <td className="px-4 py-[12px] border border-gray-300 break-words">
-                                    <Link
-                                        href={`/problems/${problem._id}`}
-                                        className="text-[#1958c1] hover:underline"
-                                    >
-                                        {problem.title}
-                                    </Link>
-                                </td>
-                                <td className="px-4 py-[12px] border border-gray-300 text-center">
-                                    {problem.point || 5}
-                                </td>
+        <div className="px-2 sm:px-6 md:px-12 py-8 w-full min-h-screen bg-gradient-to-br from-[#f8fafc] to-[#e0e7ef]">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl md:text-4xl font-bold text-[#1958c1] mb-2 text-center">Danh sách bài</h1>
+                <div className="mx-auto w-24 h-1 bg-gradient-to-r from-[#1958c1] to-[#64b5f6] rounded-full mb-8" />
+                <div className="overflow-x-auto rounded-2xl shadow-lg bg-white">
+                    <table className="min-w-[500px] w-full border border-gray-200 text-sm md:text-base rounded-2xl overflow-hidden">
+                        <thead>
+                            <tr className="bg-gradient-to-r from-[#1958c1] to-[#64b5f6] text-white">
+                                <th className="w-1/6 px-4 py-3 border text-center font-semibold rounded-tl-2xl">#</th>
+                                <th className="w-4/6 px-4 py-3 border text-left font-semibold">Bài</th>
+                                <th className="w-1/6 px-4 py-3 border text-center font-semibold rounded-tr-2xl">Điểm</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {problems.map((problem, index) => (
+                                <tr
+                                    key={problem._id || index}
+                                    className="odd:bg-white even:bg-[#f4f8fd] hover:bg-[#e3edfa] transition"
+                                >
+                                    <td className="px-4 py-3 border border-gray-200 text-center font-medium">
+                                        {limit * (page - 1) + index + 1}
+                                    </td>
+                                    <td className="px-4 py-3 border border-gray-200 break-words">
+                                        <Link
+                                            href={`/problems/${problem._id}`}
+                                            className="text-[#1958c1] hover:underline font-semibold"
+                                        >
+                                            {problem.title}
+                                        </Link>
+                                    </td>
+                                    <td className="px-4 py-3 border border-gray-200 text-center font-bold">
+                                        {problem.point || 5}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 {/* Pagination Controls */}
-                <div className="flex items-center justify-between mt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
                     <Link
                         href={`?page=${page - 1}&limit=${limit}`}
-                        className={`px-3 py-1 bg-gray-200 rounded ${page <= 1 ? 'opacity-50 pointer-events-none' : ''}`}
+                        className={`px-5 py-2 rounded-lg font-semibold bg-[#e3edfa] text-[#1958c1] shadow hover:bg-[#d0e2fa] transition ${page <= 1 ? 'opacity-50 pointer-events-none' : ''
+                            }`}
                     >
-                        Trước
+                        ← Trước
                     </Link>
-
-                    <span className="text-sm">
-                        Trang {pagination.currentPage} / {pagination.totalPages}
+                    <span className="text-base text-gray-700">
+                        Trang <span className="font-bold">{pagination.currentPage}</span> / {pagination.totalPages}
                     </span>
-
                     <Link
                         href={`?page=${page + 1}&limit=${limit}`}
-                        className={`px-3 py-1 bg-gray-200 rounded ${page >= pagination.totalPages ? 'opacity-50 pointer-events-none' : ''}`}
+                        className={`px-5 py-2 rounded-lg font-semibold bg-[#e3edfa] text-[#1958c1] shadow hover:bg-[#d0e2fa] transition ${page >= pagination.totalPages ? 'opacity-50 pointer-events-none' : ''
+                            }`}
                     >
-                        Sau
+                        Sau →
                     </Link>
                 </div>
             </div>

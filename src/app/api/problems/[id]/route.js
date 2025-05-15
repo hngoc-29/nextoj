@@ -72,7 +72,7 @@ export async function PUT(request, { params }) {
     try {
         await dbConnect();
 
-        const { id } = params;
+        const { id } = await params;
         if (!id || !mongoose.Types.ObjectId.isValid(id)) {
             return NextResponse.json(
                 { success: false, message: "Problem id không hợp lệ" },
@@ -133,10 +133,7 @@ export async function PUT(request, { params }) {
         }
 
         // 3) Build update operation
-        const updateOp = { $set: setFields };
-        if (contestIds.length > 0) {
-            updateOp.$addToSet = { contestId: { $each: contestIds } };
-        }
+        const updateOp = { $set: { ...setFields, contestId: contestIds } };
 
         // 4) Update Problem
         const updatedProblem = await Problem.findByIdAndUpdate(

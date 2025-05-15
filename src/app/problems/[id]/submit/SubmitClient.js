@@ -58,14 +58,16 @@ export default function SubmitClient({ problem }) {
     };
 
     return (
-        <div className="mt-5 w-full max-w-5xl mx-auto border-1 border-[#ccc] px-2 py-3 rounded-[5px]">
-            <div className='flex items-center gap-x-1'>
-                <span className="text-[15px] font-[400] mb-3 block">
+        <div className="mt-5 w-full max-w-5xl mx-auto border border-[#ccc] px-2 py-3 rounded-[5px] bg-white shadow-sm
+            sm:px-4 sm:py-5
+            md:px-6 md:py-7
+            ">
+            <div className='flex flex-col sm:flex-row sm:items-center gap-y-2 gap-x-3'>
+                <span className="text-[15px] font-[400] mb-2 sm:mb-0 block">
                     Dán bài làm của bạn ở đây hoặc nhập từ file:
                 </span>
-
                 {/* File input */}
-                <div className='mb-2'>
+                <div className='mb-2 sm:mb-0'>
                     <label className="inline-block cursor-pointer bg-gray-100 border border-gray-300 px-2 py-1 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-200 transition">
                         Chọn file
                         <input
@@ -76,35 +78,41 @@ export default function SubmitClient({ problem }) {
                         />
                     </label>
                 </div>
-                <span className="text-sm text-gray-600 mt-1 italic mb-2.5">{fileName}</span>
+                <span className="text-sm text-gray-600 mt-1 italic mb-2.5 sm:mb-0">{fileName}</span>
             </div>
 
             {/* Code editor */}
-            <AceEditor
-                mode={languages.find((l) => l.value === language)?.aceMode || 'text'}
-                theme="github"
-                name="code-editor"
-                fontSize={14}
-                showPrintMargin
-                showGutter
-                highlightActiveLine
-                value={code}
-                onChange={setCode}
-                setOptions={{
-                    enableBasicAutocompletion: true,
-                    enableLiveAutocompletion: true,
-                    showLineNumbers: true,
-                }}
-                className="rounded-md border border-gray-300"
-                style={{ width: '100%', height: '300px' }}
-            />
+            <div className="mt-2">
+                <AceEditor
+                    mode={languages.find((l) => l.value === language)?.aceMode || 'text'}
+                    theme="github"
+                    name="code-editor"
+                    fontSize={14}
+                    showPrintMargin
+                    showGutter
+                    highlightActiveLine
+                    value={code}
+                    onChange={setCode}
+                    setOptions={{
+                        enableBasicAutocompletion: true,
+                        enableLiveAutocompletion: true,
+                        showLineNumbers: true,
+                    }}
+                    className="rounded-md border border-gray-300"
+                    style={{
+                        width: '100%',
+                        height: '250px',
+                        maxWidth: '100vw'
+                    }}
+                />
+            </div>
 
             {/* Language select */}
             <div className="mt-4">
                 <select
                     value={language}
                     onChange={(e) => setLanguage(e.target.value)}
-                    className="p-2 border border-gray-300 rounded-md text-sm w-full"
+                    className="p-2 border border-gray-300 rounded-md text-sm w-full max-w-xs"
                 >
                     {languages.map((lang) => (
                         <option key={lang.value} value={lang.value}>
@@ -119,7 +127,8 @@ export default function SubmitClient({ problem }) {
                 <button
                     disabled={isLoading}
                     onClick={handleSubmit}
-                    className={`${isLoading ? `cursor-not-allowed` : `cursor-pointer`} mt-4 bg-gradient-to-b from-[#337ab7] to-[#265a88] hover:bg-[#265a88] text-white px-5 py-2 rounded shadow-sm text-sm`}
+                    className={`${isLoading ? `cursor-not-allowed` : `cursor-pointer`
+                        } mt-4 bg-gradient-to-b from-[#337ab7] to-[#265a88] hover:bg-[#265a88] text-white px-5 py-2 rounded shadow-sm text-sm w-full sm:w-auto`}
                 >
                     Nộp bài!
                 </button>

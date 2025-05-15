@@ -58,11 +58,11 @@ export default function ContestsManager({ initialContests }) {
     };
 
     return (
-        <div className="p-6 space-y-6">
-            <div className="flex items-center justify-between">
-                <h1 className="text-xl font-semibold">Quản lý kỳ thi</h1>
+        <div className="p-2 sm:p-6 space-y-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Quản lý kỳ thi</h2>
                 <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow font-semibold transition cursor-pointer"
                     onClick={handleCreate}
                 >
                     + Tạo kỳ thi

@@ -10,7 +10,7 @@ export default function NavLink({ href, label }) {
     return (
         <Link
             href={href}
-            className={`block px-2 py-2 rounded hover:bg-gray-700 ${isActive ? 'bg-gray-700 font-semibold' : ''
+            className={`block px-4 py-2 rounded transition duration-200 ease-in-out hover:bg-gray-700 ${isActive ? 'bg-gray-700 font-semibold' : ''
                 }`}
         >
             {label}

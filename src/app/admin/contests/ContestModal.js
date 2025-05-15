@@ -26,41 +26,42 @@ export default function ContestModal({ isOpen, onClose, onSubmit, initialData = 
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div className="bg-white p-6 rounded-lg w-full max-w-md">
-                <h2 className="text-lg font-semibold mb-4">
+            <div className="bg-white w-[95vw] max-w-md sm:max-w-lg p-6 sm:p-8 rounded-2xl shadow-2xl border border-gray-100 animate-fadeIn">
+                <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
                     {initialData ? "Cập nhật kỳ thi" : "Tạo kỳ thi"}
                 </h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                        <label className="block mb-1">Tên kỳ thi</label>
+                        <label className="block mb-1 font-semibold text-gray-700">Tên kỳ thi</label>
                         <input
                             type="text"
                             required
-                            className="border p-2 w-full"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Nhập tên kỳ thi"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Mô tả</label>
+                        <label className="block mb-1 font-semibold text-gray-700">Mô tả</label>
                         <textarea
-                            className="border p-2 w-full"
+                            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition min-h-[80px]"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Nhập mô tả kỳ thi"
                         />
                     </div>
-
-                    <div className="flex justify-end space-x-2">
+                    <div className="flex flex-col sm:flex-row gap-3 justify-end items-center mt-6">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 cursor-pointer"
+                            className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-full font-semibold transition cursor-pointer"
                         >
                             Huỷ
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
+                            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-semibold shadow transition cursor-pointer"
                         >
                             {initialData ? "Lưu thay đổi" : "Tạo mới"}
                         </button>

@@ -18,6 +18,7 @@ const authConfig = [
     { pathPattern: '/api/submissions/:id/run', methods: ['POST'], admin: false },
     { pathPattern: '/api/users', methods: ['GET'], admin: false },
     { pathPattern: '/api/users/leave', methods: ['POST'], admin: false },
+    { pathPattern: '/api/users/cpass', methods: ['POST'], admin: false },
 ];
 
 // helper: chuyển '/api/x/:id/foo' → regex

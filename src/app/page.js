@@ -1,11 +1,18 @@
-
 import Link from 'next/link';
 
 export const metadata = {
   title: 'Trang chủ | OJ Platform',
+};
+
+async function getContests() {
+  const res = await fetch(`${process.env.BASE_URL || ''}/api/contests`, { cache: "no-store" });
+  const data = await res.json();
+  return data.contest?.slice(0, 3) || [];
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  const contests = await getContests();
+
   return (
     <div className="flex-1">
       {/* Hero Section */}
@@ -36,6 +43,26 @@ export default function HomePage() {
               <h3 className="text-xl font-semibold mb-2">Tham gia cuộc thi</h3>
               <p>Thử thách bản thân với các cuộc thi lập trình hấp dẫn.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contest Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <h2 className="text-3xl font-bold text-center mb-12">Cuộc thi nổi bật</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {contests.map((c, i) => (
+              <div
+                key={c._id}
+                className="p-6 border rounded-xl shadow bg-white animate-fade-up"
+                style={{ animationDelay: `${i * 0.15 + 0.2}s`, animationFillMode: 'both' }}
+              >
+                <h3 className="text-xl font-semibold mb-2">{c.title}</h3>
+                <p className="mb-2">{c.description || "Không có mô tả"}</p>
+                <span className="text-sm text-gray-500">Số lượng bài: {c.problems?.length || 0}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

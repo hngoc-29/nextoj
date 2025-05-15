@@ -24,7 +24,6 @@ export default function UpdateProblemModal({
             updatedData.append("content", contentFile);
         }
 
-        // ✅ stringify mảng trước khi append
         updatedData.append("contestId", JSON.stringify(selectedContests));
 
         onUpdate(problemData._id, updatedData);

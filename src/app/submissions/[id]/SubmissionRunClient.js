@@ -26,7 +26,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                     next[0] = { status: 'compile_error', time: null, memory: null };
                     return next;
                 });
-            } else if (typeof data.index === 'number') {
+            } else {
                 setTestResults(prev => {
                     const next = [...prev];
                     next[data.index] = {
@@ -62,34 +62,40 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
         return () => socket.disconnect();
     }, [submissionId]);
 
+    // Helper: màu sắc cho status
+    const getStatusStyle = (status) => {
+        if (status === 'accepted') return 'bg-green-100 text-green-700 border border-green-300';
+        if (status === 'pending') return 'bg-gray-100 text-gray-500 border border-gray-200';
+        if (status === 'timeout') return 'bg-yellow-100 text-yellow-700 border border-yellow-300';
+        if (status === 'compile_error') return 'bg-red-100 text-red-700 border border-red-300';
+        return 'bg-red-100 text-red-700 border border-red-300';
+    };
+
+    const getStatusIcon = (status) => {
+        if (status === 'accepted') return '✓';
+        if (status === 'pending') return '⏳';
+        if (status === 'timeout') return '⏱';
+        if (status === 'compile_error') return '✗';
+        return '✗';
+    };
+
     return (
         <div className="space-y-4">
-            <ul className="divide-y border rounded overflow-hidden">
+            <ul className="divide-y border rounded-lg overflow-hidden bg-white">
                 {testResults.map((tc, i) => (
-                    <li key={i} className="flex justify-between items-center p-2">
+                    <li
+                        key={i}
+                        className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 sm:p-3 gap-2"
+                    >
                         <div className="flex items-center space-x-2">
                             <span
-                                className={
-                                    tc.status === 'accepted'
-                                        ? 'text-green-600'
-                                        : tc.status === 'pending'
-                                            ? 'text-gray-400'
-                                            : tc.status === 'timeout'
-                                                ? 'text-yellow-600'
-                                                : 'text-red-600'
-                                }
+                                className={`w-7 h-7 flex items-center justify-center rounded-full font-bold text-lg ${getStatusStyle(tc.status)}`}
                             >
-                                {tc.status === 'accepted'
-                                    ? '✓'
-                                    : tc.status === 'pending'
-                                        ? '⏳'
-                                        : tc.status === 'timeout'
-                                            ? '⏱'
-                                            : '✗'}
+                                {getStatusIcon(tc.status)}
                             </span>
-                            <span>Test case #{i + 1}</span>
+                            <span className="font-medium text-sm sm:text-base">Test case #{i + 1}</span>
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-0">
                             [{tc.time != null ? `${tc.time}s` : '-'} ,{' '}
                             {tc.memory != null ? `${tc.memory}MB` : '-'}]
                         </div>
@@ -98,7 +104,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
             </ul>
 
             {compileError && (
-                <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded">
                     <h3 className="font-semibold text-red-700">Lỗi biên dịch:</h3>
                     <pre className="text-sm text-red-800 whitespace-pre-wrap">
                         {compileError}

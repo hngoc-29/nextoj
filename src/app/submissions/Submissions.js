@@ -55,10 +55,10 @@ export default function SubmissionsPage() {
             <h1 className="text-2xl font-bold">Quản lý Nộp bài</h1>
 
             {/* Table */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full border border-gray-200 text-sm">
-                    <thead className="bg-gray-100">
-                        <tr>
+            <div className="overflow-x-auto rounded-lg shadow">
+                <table className="min-w-[700px] w-full bg-white text-xs sm:text-sm md:text-base">
+                    <thead>
+                        <tr className="bg-black text-white">
                             <th className="p-2 border">User</th>
                             <th className="p-2 border">Problem</th>
                             <th className="p-2 border">Status</th>
@@ -70,36 +70,76 @@ export default function SubmissionsPage() {
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={7} className="p-4 text-center text-gray-500">
+                                <td colSpan={6} className="p-4 text-center text-gray-500">
                                     Đang tải...
                                 </td>
                             </tr>
                         ) : submissions.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="p-4 text-center text-gray-500">
+                                <td colSpan={6} className="p-4 text-center text-gray-500">
                                     Không có bản ghi nào
                                 </td>
                             </tr>
                         ) : (
-                            submissions.map((sub) => (
-                                <tr key={sub._id} className="hover:bg-gray-50">
-                                    <td className="p-2 border">{sub.username}</td>
-                                    <td className="p-2 border"><Link className='text-blue-600' href={`/problems/${sub.problemId}`}>{sub.problemName}</Link></td>
-                                    <td className="p-2 border">{sub.status}</td>
-                                    <td className="p-2 border">{sub.score}</td>
-                                    <td className="p-2 border">
-                                        {new Date(sub.submittedAt).toLocaleString()}
-                                    </td>
-                                    <td className="p-2 border space-x-2">
-                                        <button
-                                            onClick={() => window.open(`/submissions/${sub._id}`, '_blank')}
-                                            className="text-blue-600 hover:underline cursor-pointer"
-                                        >
-                                            Xem
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
+                            submissions.map((sub) => {
+                                // Status color & label
+                                let statusColor = "bg-gray-200 text-gray-800";
+                                let statusLabel = sub.status;
+                                if (sub.status === "accepted") {
+                                    statusColor = "bg-green-100 text-green-700 border border-green-300";
+                                    statusLabel = "Accepted";
+                                } else if (sub.status === "compile_error") {
+                                    statusColor = "bg-red-100 text-red-700 border border-red-300";
+                                    statusLabel = "Compile Error";
+                                } else if (sub.status === "wrong_answer") {
+                                    statusColor = "bg-yellow-100 text-yellow-700 border border-yellow-300";
+                                    statusLabel = "Wrong Answer";
+                                } else if (sub.status === "timeout") {
+                                    statusColor = "bg-yellow-100 text-yellow-700 border border-yellow-300";
+                                    statusLabel = "Timeout";
+                                } else if (sub.status === "partial") {
+                                    statusColor = "bg-blue-100 text-blue-700 border border-blue-300";
+                                    statusLabel = "Partial";
+                                }
+
+                                // Score: accept/total nếu có
+                                let scoreDisplay = sub.score;
+                                if (typeof sub.acceptedTestcases === "number" && typeof sub.totalTestcases === "number") {
+                                    scoreDisplay = (
+                                        <span>
+                                            <span className="font-semibold text-green-700">{sub.acceptedTestcases}</span>
+                                            <span className="text-gray-500">/</span>
+                                            <span className="font-semibold text-gray-700">{sub.totalTestcases}</span>
+                                        </span>
+                                    );
+                                }
+
+                                return (
+                                    <tr key={sub._id} className="hover:bg-gray-50 transition">
+                                        <td className="p-2 border break-all">{sub.username}</td>
+                                        <td className="p-2 border break-all">
+                                            <Link className='text-blue-600 hover:underline' href={`/problems/${sub.problemId}`}>
+                                                {sub.problemName}
+                                            </Link>
+                                        </td>
+                                        <td className="p-2 border">
+                                            <span className={`px-2 py-1 rounded text-xs sm:text-sm font-semibold inline-block ${statusColor}`}>
+                                                {statusLabel}
+                                            </span>
+                                        </td>
+                                        <td className="p-2 border text-center">{scoreDisplay}</td>
+                                        <td className="p-2 border whitespace-nowrap">{new Date(sub.submittedAt).toLocaleString()}</td>
+                                        <td className="p-2 border space-x-2 text-center">
+                                            <button
+                                                onClick={() => window.open(`/submissions/${sub._id}`, '_blank')}
+                                                className="text-blue-600 hover:underline cursor-pointer"
+                                            >
+                                                Xem
+                                            </button>
+                                        </td>
+                                    </tr>
+                                );
+                            })
                         )}
                     </tbody>
                 </table>

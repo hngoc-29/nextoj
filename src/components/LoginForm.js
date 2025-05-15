@@ -63,7 +63,7 @@ export default function LoginModal() {
                         <div className="flex justify-end p-2 mr-2">
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="text-2xl font-bold text-gray-700 hover:text-red-500"
+                                className="text-2xl font-bold text-gray-700 hover:text-red-500 cursor-pointer"
                             >
                                 &times;
                             </button>

@@ -21,7 +21,7 @@ export default function AdminLayout({ children }) {
                 <Sidebar />
                 <div className="flex flex-col flex-1">
                     <Header />
-                    <main className="p-4 overflow-auto">{children}</main>
+                    <div className="p-4">{children}</div>
                 </div>
             </div>
         </CheckUserServer>

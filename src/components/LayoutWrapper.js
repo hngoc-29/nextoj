@@ -9,7 +9,7 @@ export default function LayoutWrapper({ children }) {
     return (
         <>
             {!isAdminPage && <Header pathname={pathname} />}
-            <div className={`${!isAdminPage && `px-5`} h-[100vh] relative`}>
+            <div className={`${!isAdminPage && `px-5`} relative`}>
                 {children}
             </div >
         </>
