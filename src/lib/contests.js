@@ -9,10 +9,8 @@ export const getAllContest = async () => {
         return {
             success: true,
             contest,
-            fetchedAt: new Date().toISOString(), // Gợi ý thêm timestamp để debug cache
         };
     } catch (err) {
-        console.log(err);
         return {
             success: false,
             message: err.message

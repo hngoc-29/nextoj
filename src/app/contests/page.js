@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Link from 'next/link';
 import React from 'react'
 import { getAllContest } from '@/lib/contests';
