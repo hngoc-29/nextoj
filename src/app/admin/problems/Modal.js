@@ -87,7 +87,7 @@ export default function Modal({ isOpen, onClose, onSubmit, title, initialData, s
             <div>
               <label className="block mb-1 font-semibold text-gray-700">Kỳ thi</label>
               <div className="flex flex-wrap gap-3">
-                {initialData.contests.map((el) => (
+                {selectedContests && initialData?.contests.map((el) => (
                   <label key={el._id} className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full cursor-pointer">
                     <input
                       type="checkbox"
@@ -108,6 +108,19 @@ export default function Modal({ isOpen, onClose, onSubmit, title, initialData, s
               </div>
             </div>
           )}
+
+          {/* Public checkbox */}
+          <div>
+            <label className="inline-flex items-center mt-2">
+              <input
+                type="checkbox"
+                name="public"
+                className="form-checkbox h-5 w-5 text-blue-600"
+                defaultChecked={initialData?.public || false}
+              />
+              <span className="ml-2 text-gray-700 font-semibold">Công khai (public)</span>
+            </label>
+          </div>
 
           {/* Actions */}
           <div className="flex flex-col sm:flex-row gap-3 justify-end items-center mt-6">

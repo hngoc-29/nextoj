@@ -73,8 +73,21 @@ export default async function page({ params }) {
                                 <th className="w-[40px] px-2 py-3 border text-center font-semibold">#</th>
                                 <th className="w-[160px] px-2 py-3 border text-left font-semibold">Tên</th>
                                 <th className="w-[100px] px-2 py-3 border text-center font-semibold">Tổng điểm</th>
-                                {problems.map((_, idx) => (
-                                    <th key={idx} className="px-2 py-3 border text-center font-semibold">{idx + 1}</th>
+                                {problems.map((problem, idx) => (
+                                    <th key={idx} className="px-2 py-3 border text-center font-semibold">
+                                        <span className="inline-block w-6 text-right">{idx + 1}</span>
+                                        <span
+                                            className="inline-block align-middle mx-1"
+                                            style={{
+                                                width: '2px',
+                                                height: '1.5em',
+                                                background: '#cbd5e1',
+                                                borderRadius: '2px',
+                                                verticalAlign: 'middle',
+                                            }}
+                                        />
+                                        <span className="inline-block w-8 text-left">{problem.point}</span>
+                                    </th>
                                 ))}
                             </tr>
                         </thead>

@@ -170,6 +170,8 @@ export default function ProblemsPage() {
                 isOpen={isCreateModalOpen}
                 onClose={() => setCreateModalOpen(false)}
                 onCreate={handleCreate}
+                selectedContests={selectedContests}
+                setSelectedContests={setSelectedContests}
             />
             <UpdateProblemModal
                 isOpen={isUpdateModalOpen}

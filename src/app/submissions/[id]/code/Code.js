@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
+import { useUser } from '@/context/user';
 import AceEditor from 'react-ace';
 import { toast } from 'react-toastify';
 
@@ -16,6 +17,7 @@ export default function Code({ id }) {
     const router = useRouter();
     const [code, setCode] = useState('');
     const [mode, setMode] = useState('c_cpp');
+    const { user } = useUser();
 
     useEffect(() => {
         (async () => {
@@ -23,11 +25,14 @@ export default function Code({ id }) {
                 // 1) Lấy info submission
                 const res1 = await fetch(`/api/submissions/${id}`);
                 const { success, submission, message } = await res1.json();
+                if (submission.userId !== user._id) {
+                    toast.error('Bạn không có quyền xem code này.');
+                    notFound();
+                }
                 if (!success) {
                     toast.error(message);
                     return;
                 }
-
                 // 2) Xác định mode
                 const lang = submission.language.toLowerCase();
                 setMode(lang === 'c++' ? 'c_cpp' : lang);

@@ -112,6 +112,10 @@ export async function PUT(request, { params }) {
         if (formData.get("submissions")) {
             setFields.submissions = JSON.parse(formData.get("submissions").toString());
         }
+        if (formData.get("public") !== null) {
+            const publicValue = formData.get("public");
+            setFields.public = publicValue === "true" ? true : false;
+        }
 
         // 2) Parse contestId(s) ra array of ObjectId strings
         let contestIds = [];

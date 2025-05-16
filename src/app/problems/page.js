@@ -16,10 +16,12 @@ export default async function ProblemListPage({ searchParams }) {
     const page = parseInt((await searchParams).page || '1', 10);
     const limit = parseInt((await searchParams).limit || '10', 10);
     const res = await fetch(
-        `${process.env.BASE_URL}/api/problems?page=${page}&limit=${limit}`,
+        `${process.env.BASE_URL}/api/problems/getPublic?page=${page}&limit=${limit}`,
         { cache: 'no-store' }
     );
-    const { success, problems, pagination } = await res.json();
+    const data = await res.json();
+
+    const { success, problems, pagination } = data;
 
     if (!success) {
         return <div className="px-7 mt-5 w-full">Lỗi khi tải danh sách bài.</div>;

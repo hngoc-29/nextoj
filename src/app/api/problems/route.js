@@ -70,6 +70,9 @@ export async function POST(request) {
         const timeLimit = Number(formData.get('timeLimit'));
         const memoryLimit = Number(formData.get('memoryLimit'));
         const point = Number(formData.get(`point`));
+        const publicValue = formData.get('public'); // Lấy giá trị public
+        const isPublic = publicValue === 'true' ? true : false; // Chuyển sang boolean
+
         const contestIdArray = formData.get('contestId')
             ? JSON.parse(formData.get('contestId').toString())
             : [];
@@ -108,6 +111,7 @@ export async function POST(request) {
             timeLimit,
             memoryLimit,
             point,
+            public: isPublic, // Đảm bảo đúng kiểu boolean
             submitions: submitionsArray,
             contestId: contestIdArray,
         });

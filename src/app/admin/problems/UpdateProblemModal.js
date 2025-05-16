@@ -26,6 +26,9 @@ export default function UpdateProblemModal({
 
         updatedData.append("contestId", JSON.stringify(selectedContests));
 
+        const isPublic = formData.get("public") === "on" ? "true" : "false";
+        updatedData.append("public", isPublic);
+
         onUpdate(problemData._id, updatedData);
         onClose();
     };
