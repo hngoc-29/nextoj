@@ -79,7 +79,14 @@ const removeFile = async (id) => {
     }
 };
 
-
+function toSlug(str) {
+    return str
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+        .replace(/[^a-zA-Z0-9\s]/g, '') // bỏ ký tự đặc biệt
+        .trim()
+        .replace(/\s+/g, '-') // thay dấu cách bằng -
+        .toLowerCase();
+}
 
 // PUT: Cập nhật problem, content có thể bỏ qua nếu không re-upload file
 export async function PUT(request, { params }) {
@@ -101,10 +108,17 @@ export async function PUT(request, { params }) {
             setFields.title = formData.get("title").toString();
         }
         if (formData.get("content") instanceof File) {
+            // Kiểm tra file có phải PDF không
+            if (!formData.get("content").name.toLowerCase().endsWith('.pdf')) {
+                return NextResponse.json(
+                    { success: false, message: "Chỉ chấp nhận file PDF." },
+                    { status: 400 }
+                );
+            }
             // nếu có file mới, upload và set URL
             await removeFile(id);
             const buf = Buffer.from(await formData.get("content").arrayBuffer());
-            const publicId = `problem_${Date.now()}_${formData.get("content").name}`;
+            const publicId = `problem_${Date.now()}_${toSlug(formData.get("content").name)}.pdf`;
             const uploadResult = await new Promise((res, rej) => {
                 const stream = cloudinary.uploader.upload_stream(
                     { resource_type: "raw", folder: "problems", public_id: publicId },

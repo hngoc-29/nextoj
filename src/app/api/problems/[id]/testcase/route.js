@@ -35,6 +35,16 @@ export const removeCloudinaryFile = async (url) => {
     return result;
 };
 
+// Hàm chuyển tên sang slug
+function toSlug(str) {
+    return str
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+        .replace(/[^a-zA-Z0-9\s]/g, '') // bỏ ký tự đặc biệt
+        .trim()
+        .replace(/\s+/g, '-') // thay dấu cách bằng -
+        .toLowerCase();
+}
+
 export async function GET(req, { params }) {
     try {
         // Kết nối với MongoDB
@@ -72,29 +82,8 @@ export async function POST(request, { params }) {
         await dbConnect();
         const { id } = await params;
         const formData = await request.formData();
-        const inputFile = formData.get('input');
-        const outputFile = formData.get('output');
 
-        if (
-            !inputFile || !(inputFile instanceof File) ||
-            !outputFile || !(outputFile instanceof File)
-        ) {
-            return NextResponse.json(
-                { success: false, message: 'Thiếu file input hoặc output' },
-                { status: 400 }
-            );
-        }
-
-        // Đọc buffer trực tiếp từ File
-        const inputBuffer = Buffer.from(await inputFile.arrayBuffer());
-        const outputBuffer = Buffer.from(await outputFile.arrayBuffer());
-
-        // Upload trực tiếp từ buffer, không dùng tmp
-        const [inputRes, outputRes] = await Promise.all([
-            uploadBuffer(inputBuffer, 'testcase', `${Date.now()}_${inputFile.name}`),
-            uploadBuffer(outputBuffer, 'testcase', `${Date.now()}_${outputFile.name}`),
-        ]);
-
+        // Lấy problem để lấy tên
         const problem = await Problem.findById(id);
         if (!problem) {
             return NextResponse.json(
@@ -102,17 +91,61 @@ export async function POST(request, { params }) {
                 { status: 200 }
             );
         }
+        const slug = toSlug(problem.title || problem.name || `problem-${id}`);
 
-        problem.testcase.push({
-            input: inputRes.secure_url,
-            output: outputRes.secure_url,
+        // Lấy tất cả key bắt đầu bằng input/output
+        const inputs = [];
+        const outputs = [];
+        for (const [key, value] of formData.entries()) {
+            if (key.startsWith('input') && value instanceof File) {
+                const idx = parseInt(key.replace('input', ''));
+                inputs[idx] = value;
+            }
+            if (key.startsWith('output') && value instanceof File) {
+                const idx = parseInt(key.replace('output', ''));
+                outputs[idx] = value;
+            }
+        }
+
+        // Kiểm tra số lượng testcase hợp lệ
+        if (!inputs.length || !outputs.length || inputs.length !== outputs.length) {
+            return NextResponse.json(
+                { success: false, message: 'Thiếu file input hoặc output hoặc số lượng không khớp' },
+                { status: 400 }
+            );
+        }
+
+        // Upload tất cả testcase
+        const uploadPromises = inputs.map(async (inputFile, idx) => {
+            const outputFile = outputs[idx];
+            if (!inputFile || !outputFile) return null;
+
+            const inputBuffer = Buffer.from(await inputFile.arrayBuffer());
+            const outputBuffer = Buffer.from(await outputFile.arrayBuffer());
+
+            const timestamp = Date.now();
+
+            const [inputRes, outputRes] = await Promise.all([
+                uploadBuffer(inputBuffer, `testcase/${slug}`, `input_${idx}${timestamp}${idx}.txt`),
+                uploadBuffer(outputBuffer, `testcase/${slug}`, `output_${idx}${timestamp}${idx}.txt`),
+            ]);
+
+            return {
+                input: inputRes.secure_url,
+                output: outputRes.secure_url,
+            };
         });
+
+        const newTestcases = (await Promise.all(uploadPromises)).filter(Boolean);
+
+        problem.testcase.push(...newTestcases);
         await problem.save();
 
         return NextResponse.json(
             {
-                success: true, message: 'Thêm testcase thành công', input: inputRes.secure_url,
-                output: outputRes.secure_url,
+                success: true,
+                message: 'Thêm testcase thành công',
+                testcases: newTestcases,
             },
             { status: 200 }
         );
@@ -143,8 +176,9 @@ export async function PUT(req, { params }) {
             return NextResponse.json({ success: false, message: 'Testcase không tồn tại' }, { status: 404 });
         }
 
+        const slug = toSlug(problem.title || problem.name || `problem-${id}`);
+
         // Xoá file cũ
-        console.log(problem.testcase[index].input)
         await Promise.all([
             removeCloudinaryFile(problem.testcase[index].input),
             removeCloudinaryFile(problem.testcase[index].output)
@@ -153,10 +187,12 @@ export async function PUT(req, { params }) {
         // Upload file mới
         const inputBuffer = Buffer.from(await inputFile.arrayBuffer());
         const outputBuffer = Buffer.from(await outputFile.arrayBuffer());
+        console.log(inputBuffer, outputBuffer)
+        const timestamp = Date.now();
 
         const [inputRes, outputRes] = await Promise.all([
-            uploadBuffer(inputBuffer, 'testcase', `${Date.now()}_${inputFile.name}`),
-            uploadBuffer(outputBuffer, 'testcase', `${Date.now()}_${outputFile.name}`),
+            uploadBuffer(inputBuffer, `testcase/${slug}`, `input_${timestamp}${index}.txt`),
+            uploadBuffer(outputBuffer, `testcase/${slug}`, `output_${timestamp}${index}.txt`),
         ]);
 
         // Gán mới
@@ -181,28 +217,32 @@ export async function DELETE(req, { params }) {
     try {
         await dbConnect();
         const { id } = await params;
-        const { searchParams } = new URL(req.url);
-        const index = parseInt(searchParams.get('index'));
+        const body = await req.json();
+        const indices = body.indices; // [{index: 1}, {index: 2}] hoặc [1,2]
 
-        if (isNaN(index)) {
-            return NextResponse.json({ success: false, message: 'Thiếu chỉ số index' }, { status: 400 });
+        if (!Array.isArray(indices) || indices.length === 0) {
+            return NextResponse.json({ success: false, message: 'Thiếu danh sách index' }, { status: 400 });
         }
 
         const problem = await Problem.findById(id);
-        if (!problem || !problem.testcase[index]) {
-            return NextResponse.json({ success: false, message: 'Testcase không tồn tại' }, { status: 404 });
+        if (!problem) {
+            return NextResponse.json({ success: false, message: 'Problem không tồn tại' }, { status: 404 });
         }
 
-        const { input, output } = problem.testcase[index];
+        // Sắp xếp giảm dần để xóa không bị lệch index
+        const sortedIndices = [...indices].sort((a, b) => b - a);
 
-        // Xóa file khỏi Cloudinary
-        await Promise.all([
-            removeCloudinaryFile(input),
-            removeCloudinaryFile(output)
-        ]);
+        for (const idx of sortedIndices) {
+            if (problem.testcase[idx]) {
+                const { input, output } = problem.testcase[idx];
+                await Promise.all([
+                    removeCloudinaryFile(input),
+                    removeCloudinaryFile(output)
+                ]);
+                problem.testcase.splice(idx, 1);
+            }
+        }
 
-        // Xóa testcase khỏi mảng
-        problem.testcase.splice(index, 1);
         await problem.save();
 
         return NextResponse.json({ success: true, message: 'Xóa testcase thành công', testcase: problem.testcase });

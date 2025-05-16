@@ -58,7 +58,14 @@ export async function GET(req) {
     }
 }
 
-
+function toSlug(str) {
+    return str
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+        .replace(/[^a-zA-Z0-9\s]/g, '') // bỏ ký tự đặc biệt
+        .trim()
+        .replace(/\s+/g, '-') // thay dấu cách bằng -
+        .toLowerCase();
+}
 
 export async function POST(request) {
     try {
@@ -98,6 +105,13 @@ export async function POST(request) {
         let contentUrl = '';
 
         if (fileField instanceof File) {
+            // Kiểm tra file có phải PDF không
+            if (!fileField.name.toLowerCase().endsWith('.pdf')) {
+                return NextResponse.json(
+                    { success: false, message: 'Chỉ chấp nhận file PDF.' },
+                    { status: 400 }
+                );
+            }
             // Nếu là file, upload lên Cloudinary
             const arrayBuffer = await fileField.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
@@ -107,7 +121,7 @@ export async function POST(request) {
                     {
                         resource_type: 'raw',
                         folder: 'problems',
-                        public_id: `problem_${Date.now()}_${fileField.name}`,
+                        public_id: `problem_${Date.now()}_${toSlug(fileField.name)}.pdf`,
                     },
                     (error, result) => {
                         if (error) return reject(error);
