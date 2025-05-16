@@ -106,7 +106,7 @@ export default async function SubmissionResultPage({ params }) {
                     </Link>
                 </div>
                 <span className={`px-3 py-1 rounded font-semibold text-xs sm:text-sm inline-block ${statusColor}`}>
-                    {statusLabel}
+                    {statusLabel === "not run" ? "Running" : statusLabel}
                 </span>
             </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
@@ -11,9 +11,16 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
     const [done, setDone] = useState(false);
     const [score, setScore] = useState(null);
     const [compileError, setCompileError] = useState(null);
+    const socketRef = useRef(null);
 
     useEffect(() => {
+        // Disconnect previous socket if exists
+        if (socketRef.current) {
+            socketRef.current.disconnect();
+        }
+
         const socket = io(BACKEND, { withCredentials: true });
+        socketRef.current = socket;
 
         socket.on(`submission_${submissionId}`, data => {
             if (data.done) {
@@ -59,8 +66,12 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
             })
             .catch(console.error);
 
-        return () => socket.disconnect();
-    }, [submissionId]);
+        return () => {
+            if (socketRef.current) {
+                socketRef.current.disconnect();
+            }
+        };
+    }, [submissionId, BACKEND]);
 
     // Helper: màu sắc cho status
     const getStatusStyle = (status) => {
