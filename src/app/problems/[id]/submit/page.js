@@ -13,6 +13,9 @@ const fetchProblem = async (id) => {
 export async function generateMetadata({ params }) {
     const { id } = await params;
     const problem = await fetchProblem(id);
+    if (!problem) {
+        notFound();
+    }
     return {
         title: `Nộp bài ${problem.title} | OJ Platform`, // Tiêu đề với tên kỳ thi
         openGraph: {

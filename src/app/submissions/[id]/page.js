@@ -1,6 +1,7 @@
 // File: src/app/submissions/[id]/page.js
 import Link from 'next/link';
 import SubmissionRunClient from './SubmissionRunClient';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 0;
 
@@ -30,7 +31,7 @@ export default async function SubmissionResultPage({ params }) {
     const base = process.env.BASE_URL;
     const subData = await fetchJSON(`${base}/api/submissions/${id}`);
     const submission = subData?.submission;
-    if (!submission) return <p>Submission not found</p>;
+    if (!submission) notFound();
 
     const probData = await fetchJSON(
         `${base}/api/problems/${submission.problemId}`

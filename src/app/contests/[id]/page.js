@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import ButtonTg from '@/components/ButtonTg';
+import { notFound } from 'next/navigation';
 
 const fetchContest = async (id) => {
     const res = await fetch(`${process.env.BASE_URL}/api/contests/${id}`);
@@ -33,6 +34,9 @@ export default async function page({ params }) {
     const { id } = await params;
     let problems = await fetchProblem(id);
     let contest = await fetchContest(id);
+    if (!contest) {
+        notFound();
+    }
     return (
         <div className="py-8 px-2 sm:px-6 md:px-12">
             <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-6 md:p-10">

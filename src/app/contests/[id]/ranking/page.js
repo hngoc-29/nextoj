@@ -1,5 +1,6 @@
 import ButtonTg from '@/components/ButtonTg';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import React from 'react'
 
 const fetchContest = async (id) => {
@@ -33,6 +34,9 @@ export default async function page({ params }) {
     const { id } = await params;
     let problems = await fetchProblem(id);
     let contest = await fetchContest(id);
+    if (!contest) {
+        notFound();
+    }
 
     // Tính tổng điểm và sắp xếp user giảm dần
     const computedUsers = (contest.user || []).map(user => ({

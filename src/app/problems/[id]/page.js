@@ -2,6 +2,7 @@ import { Check, ChevronRight, Clock, FileInput, Keyboard, NotebookPen, Server } 
 import Link from "next/link";
 import DropdownItem from "../DropdownItem";
 import Admin from "./Admin";
+import { notFound } from "next/navigation";
 
 const fetchProblem = async (id) => {
     const res = await fetch(`${process.env.BASE_URL}/api/problems/${id}`);
@@ -27,6 +28,9 @@ export async function generateMetadata({ params }) {
 export default async function ProblemPage({ params }) {
     const { id } = await params;
     let problem = await fetchProblem(id);
+    if (!problem) {
+        notFound();
+    }
 
     const infoItems = [
         { icon: <Check size={20} strokeWidth={3} />, label: 'Điểm', value: problem.point },
