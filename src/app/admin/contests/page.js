@@ -3,7 +3,7 @@
 import ContestsManager from './ContestsManager';
 
 export const metadata = {
-    title: 'Quản lý kỳ thi| OJ Platform',
+    title: 'Quản lý kỳ thi | OJ Platform',
 };
 
 // Server Component

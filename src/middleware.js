@@ -11,6 +11,8 @@ const authConfig = [
     { pathPattern: '/api/problems/:id', methods: ['PUT', 'DELETE'], admin: true },
     { pathPattern: '/api/problems/:id/testcase', methods: ['POST', 'PUT', 'DELETE'], admin: true },
     { pathPattern: '/api/users', methods: ['POST'], admin: true },
+    { pathPattern: '/api/contests/:id/add-problems', methods: ['POST'], admin: true },
+    { pathPattern: '/api/contests/:id/remove-problem', methods: ['POST'], admin: true },
 
     // === REGISTERED USERS ===
     { pathPattern: '/api/cookie', methods: ['DELETE'], admin: false },

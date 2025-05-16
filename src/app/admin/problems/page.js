@@ -106,6 +106,7 @@ export default function ProblemsPage() {
                 <table className="min-w-full bg-white border border-gray-200 text-sm">
                     <thead>
                         <tr className="bg-blue-50 text-gray-700">
+                            <th className="p-3 border-b font-semibold text-center">#</th>
                             <th className="p-3 border-b font-semibold text-center">Tiêu đề</th>
                             <th className="p-3 border-b font-semibold text-center">Thời gian</th>
                             <th className="p-3 border-b font-semibold text-center">Bộ nhớ</th>
@@ -116,6 +117,7 @@ export default function ProblemsPage() {
                     <tbody>
                         {problems.map((problem) => (
                             <tr key={problem._id} className="hover:bg-blue-50 transition">
+                                <td className="p-3 border-b text-center">{problem._id}</td>
                                 <td className="p-3 border-b text-center">{problem.title}</td>
                                 <td className="p-3 border-b text-center">{problem.timeLimit} ms</td>
                                 <td className="p-3 border-b text-center">{problem.memoryLimit} MB</td>

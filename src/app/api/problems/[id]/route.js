@@ -206,6 +206,12 @@ export async function DELETE(req, { params }) {
 
         if (!problem) throw new Error("Bài không tồn tại")
 
+        // Xóa id bài toán khỏi tất cả contest chứa nó
+        await Contest.updateMany(
+            { problems: problem._id },
+            { $pull: { problems: problem._id } }
+        );
+
         return NextResponse.json({
             success: true,
             message: "Xóa bài thành công",

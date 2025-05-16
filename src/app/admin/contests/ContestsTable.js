@@ -1,4 +1,7 @@
 'use client';
+
+import Link from "next/link";
+
 export default function ContestsTable({ contests, onEdit, onDelete }) {
     return (
         <div className="overflow-x-auto rounded-xl shadow">
@@ -13,7 +16,7 @@ export default function ContestsTable({ contests, onEdit, onDelete }) {
                 <tbody>
                     {contests.map((contest) => (
                         <tr key={contest._id} className="hover:bg-blue-50 transition">
-                            <td className="p-3 border-b text-center">{contest.title}</td>
+                            <td className="p-3 border-b text-center"><Link className="text-blue-600 hover:underline" href={`/admin/contests/${contest._id}`}>{contest.title}</Link></td>
                             <td className="p-3 border-b text-center">{contest.description}</td>
                             <td className="p-3 border-b text-center space-x-2">
                                 <button
