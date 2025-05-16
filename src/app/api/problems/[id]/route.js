@@ -38,30 +38,44 @@ export async function GET(req, { params }) {
 
 const removeFile = async (id) => {
     try {
+        console.log('Xóa file Cloudinary:', id);
         const problem = await Problem.findById(id);
         if (!problem || !problem.content) {
-            throw new Error('Problem not found or no file URL.');
+            // Không có file, không cần xóa gì cả
+            return;
         }
 
         const url = problem.content;
 
-        // Giữ nguyên .pdf trong public_id
-        const matches = url.match(/\/upload\/(?:v\d+\/)?(.+\.(pdf|zip|txt|docx|csv))/);
-        if (!matches || matches.length < 2) {
-            throw new Error('Could not extract public_id from URL.');
+        // Chỉ xóa nếu là file Cloudinary (bắt đầu bằng https://res.cloudinary.com/)
+        if (!url.startsWith('https://res.cloudinary.com/')) {
+            return;
         }
 
-        const publicId = matches[1]; // ví dụ: problems/problem_xxx.pdf
+        // Giữ nguyên .pdf trong public_id
+        const matches = url.match(/\/upload\/(?:v\d+\/)?(.+)/);
+        if (!matches || matches.length < 2) {
+            console.log('Không phải file Cloudinary', matches);
+            return;
+        }
+        const publicId = decodeURIComponent(matches[1]);
 
-        const result = await cloudinary.uploader.destroy(publicId, {
-            resource_type: 'raw', // hoặc 'auto' nếu cần
-        });
-
-        console.log('Cloudinary delete result:', result);
-        return result;
+        try {
+            const result = await cloudinary.uploader.destroy(publicId, {
+                resource_type: 'raw',
+            });
+            // Nếu file không tồn tại trên Cloudinary cũng không báo lỗi
+            if (result.result === 'not found') {
+                return;
+            }
+        } catch (error) {
+            // Nếu lỗi là file không tồn tại thì bỏ qua
+            if (error.http_code === 404) return;
+            throw error;
+        }
     } catch (error) {
-        console.error('Error removing file from Cloudinary:', error);
-        throw error;
+        // Không báo lỗi nếu không tìm thấy file hoặc không phải file Cloudinary
+        return;
     }
 };
 
@@ -99,6 +113,9 @@ export async function PUT(request, { params }) {
                 stream.end(buf);
             });
             setFields.content = uploadResult.secure_url;
+        } else if (typeof formData.get("content") === "string" && formData.get("content")) {
+            // Nếu là link, chỉ set lại content
+            setFields.content = formData.get("content").toString();
         }
         if (formData.get("timeLimit")) {
             setFields.timeLimit = Number(formData.get("timeLimit"));

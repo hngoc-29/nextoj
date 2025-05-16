@@ -73,41 +73,61 @@ export async function POST(request) {
         const publicValue = formData.get('public'); // Lấy giá trị public
         const isPublic = publicValue === 'true' ? true : false; // Chuyển sang boolean
 
-        const contestIdArray = formData.get('contestId')
-            ? JSON.parse(formData.get('contestId').toString())
-            : [];
-        const submitionsArray = formData.get('submitions')
-            ? JSON.parse(formData.get('submitions').toString())
-            : [];
-
-        // 2) Xử lý file PDF
-        const fileField = formData.get('content');
-        if (!fileField || !(fileField instanceof File)) {
-            throw new Error('Thiếu file PDF ở trường "content"');
+        const contestIdRaw = formData.get('contestId');
+        let contestIdArray = [];
+        if (contestIdRaw) {
+            try {
+                contestIdArray = JSON.parse(contestIdRaw);
+            } catch {
+                contestIdArray = [];
+            }
         }
-        const arrayBuffer = await fileField.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
 
-        // 3) Upload buffer lên Cloudinary
-        const uploadResult = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                {
-                    resource_type: 'raw',
-                    folder: 'problems',
-                    public_id: `problem_${Date.now()}_${fileField.name}`,
-                },
-                (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result);
-                }
-            );
-            stream.end(buffer);
-        });
+        const submitionsRaw = formData.get('submitions');
+        let submitionsArray = [];
+        if (submitionsRaw) {
+            try {
+                submitionsArray = JSON.parse(submitionsRaw);
+            } catch {
+                submitionsArray = [];
+            }
+        }
+
+        // 2) Xử lý file PDF hoặc link
+        const fileField = formData.get('content');
+        let contentUrl = '';
+
+        if (fileField instanceof File) {
+            // Nếu là file, upload lên Cloudinary
+            const arrayBuffer = await fileField.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        resource_type: 'raw',
+                        folder: 'problems',
+                        public_id: `problem_${Date.now()}_${fileField.name}`,
+                    },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                );
+                stream.end(buffer);
+            });
+            contentUrl = uploadResult.secure_url;
+        } else if (typeof fileField === 'string' || fileField instanceof String) {
+            // Nếu là link, dùng trực tiếp
+            contentUrl = fileField.toString();
+        } else {
+            throw new Error('Thiếu file PDF hoặc link ở trường "content"');
+        }
 
         // 4) Lưu record vào MongoDB
         const problem = await Problem.create({
             title,
-            content: uploadResult.secure_url,
+            content: contentUrl,
             timeLimit,
             memoryLimit,
             point,

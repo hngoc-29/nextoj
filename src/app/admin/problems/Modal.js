@@ -1,17 +1,24 @@
 'use client';
 
 // components/Modal.js
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Modal({ isOpen, onClose, onSubmit, title, initialData, selectedContests, setSelectedContests }) {
-  if (!isOpen) return null;
+  const [contentType, setContentType] = useState('file'); // 'file' hoặc 'link'
 
   useEffect(() => {
-    if (initialData) {
-      setSelectedContests(initialData.contestId)
+    if (isOpen && initialData && Array.isArray(initialData.contestId)) {
+      setSelectedContests(initialData.contestId);
+      if (initialData.content && initialData.content.startsWith('http') && !initialData.content.endsWith('.pdf')) {
+        setContentType('link');
+      } else {
+        setContentType('file');
+      }
     }
     // eslint-disable-next-line
-  }, []);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <div
@@ -70,16 +77,51 @@ export default function Modal({ isOpen, onClose, onSubmit, title, initialData, s
             </div>
           </div>
 
-          {/* Content file upload */}
+          {/* Chọn kiểu nhập nội dung */}
           <div>
-            <label className="block mb-1 font-semibold text-gray-700">File nội dung (PDF)</label>
-            <input
-              type="file"
-              name="content"
-              accept=".pdf"
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-              required={!initialData?.content}
-            />
+            <label className="block mb-1 font-semibold text-gray-700">Nội dung bài toán</label>
+            <div className="flex gap-4 mb-2">
+              <label>
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="file"
+                  checked={contentType === 'file'}
+                  onChange={() => setContentType('file')}
+                  className="mr-1 cursor-pointer"
+                />
+                File PDF
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="contentType"
+                  value="link"
+                  checked={contentType === 'link'}
+                  onChange={() => setContentType('link')}
+                  className="mr-1 cursor-pointer"
+                />
+                Link (URL)
+              </label>
+            </div>
+            {contentType === 'file' ? (
+              <input
+                type="file"
+                name="content"
+                accept=".pdf"
+                className="w-full p-2 border cursor-pointer border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                required={contentType === 'file' && !initialData?.content}
+              />
+            ) : (
+              <input
+                type="url"
+                name="content"
+                placeholder="Nhập link nội dung (URL)"
+                defaultValue={initialData?.content && !initialData.content.endsWith('.pdf') ? initialData.content : ''}
+                className="w-full p-3 border cursor-pointer border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                required={contentType === 'link'}
+              />
+            )}
           </div>
 
           {/* Contests checkboxes if provided */}
