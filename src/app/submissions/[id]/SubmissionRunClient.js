@@ -103,6 +103,11 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
 
     return (
         <div className="space-y-4">
+            {!done && (
+                <div className="text-[16px] text-gray-500 italic">
+                    * Ghi chú: Vui lòng không tải lại trang khi đang chấm điểm.
+                </div>
+            )}
             <ul className="divide-y border rounded-lg overflow-hidden bg-white">
                 {testResults.map((tc, i) => (
                     <li
@@ -114,7 +119,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                             <span
                                 className={`w-7 h-7 flex items-center justify-center rounded-full font-bold text-lg ${getStatusStyle(tc.status)}`}
                             >
-                                {getStatusIcon(tc.status)}
+                                {getStatusIcon(tc?.status)}
                             </span>
                             <span className="font-medium text-sm sm:text-base">Test case #{i + 1}</span>
                         </div>
