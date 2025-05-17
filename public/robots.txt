@@ -1,6 +1,0 @@
-User-agent: *
-Disallow: /500
-Disallow: /admin
-Disallow: /api
-Disallow: /problems/*/my-submissions
-Disallow: /problems/*/manager-testcase
