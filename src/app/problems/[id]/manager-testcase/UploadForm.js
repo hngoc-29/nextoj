@@ -66,6 +66,40 @@ export default function UploadForm({ problemId }) {
         else alert(data.message);
     };
 
+    // Hàm tự động fill các cặp input/output
+    const handleFill = () => {
+        // Lọc các file input và output đúng định dạng
+        const inputFiles = zipFiles.filter(f => /^input\d{2}\.txt$/.test(f)).sort();
+        const outputFiles = zipFiles.filter(f => /^output\d{2}\.txt$/.test(f)).sort();
+
+        // Kiểm tra số lượng và tên file có khớp không
+        if (
+            inputFiles.length === 0 ||
+            outputFiles.length === 0 ||
+            inputFiles.length !== outputFiles.length
+        ) {
+            alert('Không tìm thấy đủ file input/output đúng định dạng (input01.txt, output01.txt, ...) hoặc số lượng không khớp.');
+            return;
+        }
+
+        // Kiểm tra từng cặp có cùng số thứ tự không
+        for (let i = 0; i < inputFiles.length; i++) {
+            const inNum = inputFiles[i].match(/\d{2}/)[0];
+            const outNum = outputFiles[i].match(/\d{2}/)[0];
+            if (inNum !== outNum) {
+                alert('Các file input/output không khớp số thứ tự.');
+                return;
+            }
+        }
+
+        // Tạo pairs
+        const newPairs = inputFiles.map((input, i) => ({
+            input,
+            output: outputFiles[i],
+        }));
+        setPairs(newPairs);
+    };
+
     return (
         <div className="bg-gradient-to-br from-blue-50 to-white p-6 rounded-2xl shadow-lg border border-gray-100 max-w-xl mx-auto my-4">
             <h2 className="text-2xl font-bold mb-4 text-blue-700 flex items-center gap-2">
@@ -89,6 +123,15 @@ export default function UploadForm({ problemId }) {
             </label>
             {zipFiles.length > 0 && (
                 <div className="space-y-4">
+                    <div className="flex justify-end mb-2">
+                        <button
+                            type="button"
+                            onClick={handleFill}
+                            className="bg-green-500 cursor-pointer hover:bg-green-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+                        >
+                            Tự động điền
+                        </button>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {pairs.map((pair, idx) => (
                             <div key={idx} className="flex flex-col sm:flex-row gap-2 items-center bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
