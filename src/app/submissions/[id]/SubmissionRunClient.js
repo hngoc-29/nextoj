@@ -12,6 +12,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
     const [score, setScore] = useState(null);
     const [compileError, setCompileError] = useState(null);
     const socketRef = useRef(null);
+    const lastItemRef = useRef(null);
 
     useEffect(() => {
         // Nếu đã có socket cũ, loại bỏ listener và disconnect
@@ -77,6 +78,12 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
         };
     }, [submissionId, BACKEND]);
 
+    useEffect(() => {
+        if (lastItemRef.current) {
+            lastItemRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
+    }, [testResults]);
+
     // Helper: màu sắc cho status
     const getStatusStyle = (status) => {
         if (status === 'accepted') return 'bg-green-100 text-green-700 border border-green-300';
@@ -100,6 +107,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                 {testResults.map((tc, i) => (
                     <li
                         key={i}
+                        ref={i === testResults.length - 1 ? lastItemRef : null}
                         className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 sm:p-3 gap-2"
                     >
                         <div className="flex items-center space-x-2">

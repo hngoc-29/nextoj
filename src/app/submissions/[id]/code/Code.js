@@ -25,7 +25,7 @@ export default function Code({ id }) {
                 // 1) Lấy info submission
                 const res1 = await fetch(`/api/submissions/${id}`);
                 const { success, submission, message } = await res1.json();
-                if (submission.userId !== user._id) {
+                if (submission.userId !== user._id && !user.isAdmin) {
                     toast.error('Bạn không có quyền xem code này.');
                     notFound();
                 }

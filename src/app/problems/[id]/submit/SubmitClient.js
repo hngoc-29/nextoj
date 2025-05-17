@@ -54,7 +54,6 @@ export default function SubmitClient({ problem }) {
         } else {
             toast.error(res.message);
         }
-        setIsLoading(false);
     };
 
     return (
