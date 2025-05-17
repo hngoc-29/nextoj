@@ -14,15 +14,16 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
     const socketRef = useRef(null);
 
     useEffect(() => {
-        // Disconnect previous socket if exists
+        // Nếu đã có socket cũ, loại bỏ listener và disconnect
         if (socketRef.current) {
+            socketRef.current.off(`submission_${submissionId}`);
             socketRef.current.disconnect();
         }
 
         const socket = io(BACKEND, { withCredentials: true });
         socketRef.current = socket;
 
-        socket.on(`submission_${submissionId}`, data => {
+        const handler = data => {
             if (data.done) {
                 setDone(true);
                 setScore(data.score);
@@ -44,7 +45,9 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                     return next;
                 });
             }
-        });
+        };
+
+        socket.on(`submission_${submissionId}`, handler);
 
         fetch(`${BACKEND}/submissions/${submissionId}/run`, { method: 'POST' })
             .then(res => res.json())
@@ -68,6 +71,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
 
         return () => {
             if (socketRef.current) {
+                socketRef.current.off(`submission_${submissionId}`, handler);
                 socketRef.current.disconnect();
             }
         };

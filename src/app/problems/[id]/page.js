@@ -57,7 +57,7 @@ export default async function ProblemPage({ params }) {
                     <div className="w-full rounded-lg overflow-hidden border border-gray-200 shadow-sm mb-4">
                         <iframe
                             src={problem.content}
-                            className="w-full h-64 md:h-[70vh] bg-gray-50"
+                            className="w-full h-64 md:h-[100vh] bg-gray-50"
                             title="Problem Statement"
                         />
                     </div>
