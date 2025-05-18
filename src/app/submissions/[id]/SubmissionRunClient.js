@@ -130,7 +130,7 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                         <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-0">
                             [
                             {tc.status === 'timeout' && timeLimit
-                                ? `>${(timeLimit / 1000).toFixed(3)}s`
+                                ? ` > ${(timeLimit / 1000).toFixed(3)}s`
                                 : tc.time != null
                                     ? `${tc.time}s`
                                     : '-'
