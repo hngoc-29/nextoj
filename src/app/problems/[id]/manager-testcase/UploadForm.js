@@ -57,14 +57,26 @@ export default function UploadForm({ problemId }) {
             form.append(`output${i}`, new File([outputFile], outputName));
         }
 
-        const res = await fetch(`/api/problems/${problemId}/testcase`, {
-            method: 'POST',
-            body: form,
-        });
-        const data = await res.json();
-        setLoading(false);
-        if (data.success) location.reload();
-        else alert(data.message);
+        try {
+            const res = await fetch(`/api/problems/${problemId}/testcase`, {
+                method: 'POST',
+                body: form,
+            });
+
+            if (res.status === 413) {
+                setLoading(false);
+                alert('File upload quá lớn. Vui lòng chọn ít testcase hơn hoặc giảm kích thước file ZIP.');
+                return;
+            }
+
+            const data = await res.json();
+            setLoading(false);
+            if (data.success) location.reload();
+            else alert(data.message);
+        } catch (err) {
+            setLoading(false);
+            alert('Có lỗi xảy ra khi upload. Vui lòng thử lại.');
+        }
     };
 
     // Hàm tự động fill các cặp input/output
@@ -151,6 +163,19 @@ export default function UploadForm({ problemId }) {
                             >
                                 Tự động điền
                             </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setPairs([{ input: null, output: null }]);
+                                    setZipFiles([]);
+                                    // Xóa file khỏi input
+                                    const input = document.getElementById('zip-input');
+                                    if (input) input.value = '';
+                                }}
+                                className="ml-2 bg-red-500 cursor-pointer hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+                            >
+                                Xóa tất cả
+                            </button>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {pairs.map((pair, idx) => (
@@ -181,6 +206,19 @@ export default function UploadForm({ problemId }) {
                                             ))}
                                         </select>
                                     </div>
+                                    {/* Nút xóa cặp này */}
+                                    {pairs.length > 1 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setPairs(pairs.filter((_, i) => i !== idx));
+                                            }}
+                                            className="ml-2 mt-2 sm:mt-0 bg-red-100 hover:bg-red-200 text-red-600 font-bold rounded px-3 py-1 transition"
+                                            title="Xóa cặp này"
+                                        >
+                                            Xóa
+                                        </button>
+                                    )}
                                 </div>
                             ))}
                         </div>
