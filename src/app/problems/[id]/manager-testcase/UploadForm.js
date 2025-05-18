@@ -60,6 +60,7 @@ export default function UploadForm({ problemId }) {
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/problems/${problemId}/testcase`, {
                 method: 'POST',
+                credentials: 'include',
                 body: form,
                 credentials: 'include' // gửi cookie lên backend
             });
