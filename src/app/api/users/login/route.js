@@ -28,10 +28,10 @@ export async function POST(req) {
             expiresIn: "7d",
         });
 
-        cookies().set("token", token, {
+        (await cookies()).set("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "Strict",
+            sameSite: "None",
             maxAge: 60 * 60 * 24 * 7, // 7 ngày
         });
 
