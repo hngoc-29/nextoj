@@ -34,6 +34,13 @@ export default function UploadForm({ problemId }) {
         setPairs(newPairs);
     };
 
+    // Hàm lấy token từ cookie theo tên
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
     // Gửi lên server
     const handleAdd = async () => {
         if (pairs.some(p => !p.input || !p.output)) {
@@ -57,12 +64,17 @@ export default function UploadForm({ problemId }) {
             form.append(`output${i}`, new File([outputFile], outputName));
         }
 
+        // Lấy token từ cookie
+        const token = getCookie('token');
+
         try {
             const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/problems/${problemId}/testcase`, {
                 method: 'POST',
                 body: form,
-                credentials: 'include', // Thêm dòng này
-        });
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
 
             if (res.status === 413) {
                 setLoading(false);

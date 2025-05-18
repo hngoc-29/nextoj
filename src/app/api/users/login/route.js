@@ -29,9 +29,7 @@ export async function POST(req) {
         });
 
         (await cookies()).set("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "None",
+            httpOnly: false,
             maxAge: 60 * 60 * 24 * 7, // 7 ngày
         });
 
