@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 import io from 'socket.io-client';
 
-export default function SubmissionRunClient({ submissionId, initialTestCount, BACKEND }) {
+export default function SubmissionRunClient({ submissionId, initialTestCount, BACKEND, timeLimit }) {
     const [testResults, setTestResults] = useState(
         Array(initialTestCount).fill({ status: 'pending', time: null, memory: null })
     );
@@ -56,7 +56,11 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                 if (data.success) toast.warn(data.message)
                 if (data.testStatuses) {
                     setTestResults(
-                        data.testStatuses.map(status => ({ status, time: null, memory: null }))
+                        data.testStatuses.map(ts => ({
+                            status: ts.status,
+                            time: ts.time,
+                            memory: ts.memory ?? null
+                        }))
                     );
                 }
                 if (data.status === 'compile_error' && data.msg) {
@@ -124,7 +128,14 @@ export default function SubmissionRunClient({ submissionId, initialTestCount, BA
                             <span className="font-medium text-sm sm:text-base">Test case #{i + 1}</span>
                         </div>
                         <div className="text-xs sm:text-sm text-gray-600 mt-1 sm:mt-0">
-                            [{tc.time != null ? `${tc.time}s` : '-'} ,{' '}
+                            [
+                            {tc.status === 'timeout' && timeLimit
+                                ? `>${(timeLimit / 1000).toFixed(3)}s`
+                                : tc.time != null
+                                    ? `${tc.time}s`
+                                    : '-'
+                            }
+                            ,{' '}
                             {tc.memory != null ? `${tc.memory}MB` : '-'}]
                         </div>
                     </li>

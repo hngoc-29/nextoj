@@ -137,6 +137,7 @@ export default async function SubmissionResultPage({ params }) {
                     submissionId={submission._id}
                     initialTestCount={testCount}
                     BACKEND={process.env.NEXT_PUBLIC_BACKEND_URL}
+                    timeLimit={problem.timeLimit}
                 />
             )}
         </div>
