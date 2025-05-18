@@ -57,7 +57,6 @@ export async function middleware(request) {
         const secret = new TextEncoder().encode(process.env.SECRET_USER);
         const { payload } = await jwtVerify(token, secret);
         // nếu cần admin và user không phải admin → reject
-        console.log(payload)
         if (rule.admin && !payload.isAdmin) {
             return NextResponse.json({ success: false, message: 'Không có quyền truy cập' }, { status: 200 });
         }

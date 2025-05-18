@@ -58,9 +58,10 @@ export default function UploadForm({ problemId }) {
         }
 
         try {
-            const res = await fetch(`/api/problems/${problemId}/testcase`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/problems/${problemId}/testcase`, {
                 method: 'POST',
                 body: form,
+                credentials: 'include' // gửi cookie lên backend
             });
 
             if (res.status === 413) {
