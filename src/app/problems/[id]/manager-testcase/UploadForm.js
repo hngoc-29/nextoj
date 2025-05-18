@@ -62,6 +62,7 @@ export default function UploadForm({ problemId }) {
                 method: 'POST',
                 credentials: 'include',
                 body: form,
+                credentials: 'include' // gửi cookie lên backend
             });
 
             if (res.status === 413) {
