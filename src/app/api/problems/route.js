@@ -19,6 +19,7 @@ export async function GET(req) {
         const page = parseInt(searchParams.get('page') || '1', 10);
         const limit = parseInt(searchParams.get('limit') || '10', 10);
         const skip = (page - 1) * limit;
+        const search = searchParams.get('search')?.trim();
 
         let filter = {};
         if (contestId != null) {
@@ -29,6 +30,15 @@ export async function GET(req) {
                 );
             }
             filter.contestId = new mongoose.Types.ObjectId(contestId);
+        }
+
+        // Thêm filter tìm kiếm theo id hoặc title
+        if (search) {
+            if (mongoose.Types.ObjectId.isValid(search)) {
+                filter._id = search;
+            } else {
+                filter.title = { $regex: search, $options: 'i' };
+            }
         }
 
         // Tổng số bài theo filter
