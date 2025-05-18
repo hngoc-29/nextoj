@@ -68,7 +68,7 @@ export default function UploadForm({ problemId }) {
         const token = getCookie('token');
 
         try {
-            const res = await fetch(`${process.env.BACKEND_URL_UP_TEST}/problems/${problemId}/testcase`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL_UP_TEST}/problems/${problemId}/testcase`, {
                 method: 'POST',
                 body: form,
                 headers: {

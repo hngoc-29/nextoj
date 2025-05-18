@@ -30,8 +30,8 @@ export default function AuthButton({ }) {
     }, []);
 
     useEffect(() => {
-        const BACKEND_UP_TEST = process.env.BACKEND_URL_UP_TEST;
-        const BACKEND_RUN_CODE = process.env.BACKEND_URL_RUN_CODE;
+        const BACKEND_UP_TEST = process.env.NEXT_PUBLIC_BACKEND_URL_UP_TEST;
+        const BACKEND_RUN_CODE = process.env.NEXT_PUBLIC_BACKEND_URL_RUN_CODE;
         fetch(`${BACKEND_UP_TEST}/start`);
         fetch(`${BACKEND_RUN_CODE}/start`);
     }, []);
