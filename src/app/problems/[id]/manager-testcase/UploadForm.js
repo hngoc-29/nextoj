@@ -58,10 +58,11 @@ export default function UploadForm({ problemId }) {
         }
 
         try {
-            const res = await fetch(`/api/problems/${problemId}/testcase`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/problems/${problemId}/testcase`, {
                 method: 'POST',
                 body: form,
-            });
+                credentials: 'include', // Thêm dòng này
+        });
 
             if (res.status === 413) {
                 setLoading(false);
